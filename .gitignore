@@ -2,3 +2,5 @@
 prophet.ipynb
 *.sql
 .DS_Store
+/Data
+/Downloads
