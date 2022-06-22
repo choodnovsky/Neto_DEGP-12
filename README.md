@@ -37,6 +37,14 @@
 | Кейс-стади         |[dz_3.08][21]|
 
 
+### HDFS
+
+| ***Наименование исследования***  | ***notebook*** |
+|:------------- |:-----------:|
+| MapReduce 1       |[dz_4.02][22]<br>[mapper][23]<br>[reducer][24]<br>[script][25]<br>[log][26]|
+
+
+
 
 
 
@@ -63,3 +71,9 @@
 [19]:https://github.com/choodnovsky/Neto_DEGP-12/blob/master/dz_3.06.ipynb
 [20]:https://github.com/choodnovsky/Neto_DEGP-12/blob/master/dz_3.07.ipynb
 [21]:https://github.com/choodnovsky/Neto_DEGP-12/blob/master/dz_3.08.ipynb
+
+[22]:https://github.com/choodnovsky/Neto_DEGP-12/blob/master/dz_4.02.ipynb
+[23]:https://github.com/choodnovsky/Neto_DEGP-12/blob/master/mapper.py
+[24]:https://github.com/choodnovsky/Neto_DEGP-12/blob/master/reducer.py
+[25]:https://github.com/choodnovsky/Neto_DEGP-12/blob/master/mapreduce_1.sh
+[26]:https://raw.githubusercontent.com/choodnovsky/Neto_DEGP-12/master/result.log
