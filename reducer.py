@@ -1,11 +1,11 @@
 import sys
-counter = {}
+counter = {}  # заводим пустой словарь
 inputfile = sys.stdin
-for line in inputfile:
-    line = line.strip()
-    if line in counter:
+for line in inputfile:  # принимаем данные из консоли
+    line = line.strip()  # отбрасываем пробельные символы с краев
+    if line in counter:  # если такой ключь уже есть в словаре, прибавляем 1
         counter[line] += 1
-    else:
+    else: # иначе создаем новый ключ
         counter[line] = 1
 for key, val in counter.items():
-    print(f'слово {key} встретилось {val} раз')
+    print(f'слово {key} встретилось {val} раз')  # выводим подсчеты слов на печать
