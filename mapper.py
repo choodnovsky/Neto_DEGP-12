@@ -6,7 +6,7 @@ inputfile = sys.stdin  # принимаем данные из считанног
 next(inputfile)  # пропускаем заголовок
 for line in inputfile:
     phrase = line.split(',')[0]  # получаем текст запроса без числа упоминаний
-    phrase = m.lemmatize(phrase.strip())[:-1] # приводим слова запроса к 1 словоформе и отбрасываем перенос строки
-    for word in phrase:  # еще раз делим фразу на отдельные слова
-        if word.isalpha():  # если слово состоит из букв
+    phrase = m.lemmatize(phrase)[:-1] # приводим слова запроса к 1 словоформе и отбрасываем перенос строки
+    for word in phrase:  # проходимся по словам в списке из запроса
+        if word.isalpha():  # если слово не пустое и состоит из букв
             print(f'{word}')  # выводим в печать
