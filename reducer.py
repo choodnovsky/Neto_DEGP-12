@@ -1,8 +1,8 @@
 import sys
 
 counter = {}  # заводим пустой словарь
-inputfile = sys.stdin
-for line in inputfile:  # принимаем данные из консоли
+inputfile = sys.stdin  # принимаем данные из консоли
+for line in inputfile:
     line = line.strip()  # отбрасываем пробельные символы с краев
     if line in counter:  # если такой ключ в словаре уже есть, прибавляем 1
         counter[line] += 1
