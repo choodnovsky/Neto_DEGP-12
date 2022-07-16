@@ -44,6 +44,12 @@
 | MapReduce 1       |[dz_4.02][22]<br>[mapper][23]<br>[reducer][24]<br>[script][25]<br>[log][26]|
 
 
+### Продвинутые методы работы с данными
+
+| ***Наименование исследования***  | ***notebook*** |
+|:------------- |:-----------:|
+| Работа с Apache Spark       |[dz_5.01][27]|
+
 
 
 
@@ -77,3 +83,4 @@
 [24]:https://github.com/choodnovsky/Neto_DEGP-12/blob/master/reducer.py
 [25]:https://github.com/choodnovsky/Neto_DEGP-12/blob/master/mapreduce_1.sh
 [26]:https://raw.githubusercontent.com/choodnovsky/Neto_DEGP-12/master/result.log
+[27]:https://raw.githubusercontent.com/choodnovsky/Neto_DEGP-12/master/dz_5.01.txt
