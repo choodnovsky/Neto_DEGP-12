@@ -1,0 +1,108 @@
+Type "help", "copyright", "credits" or "license" for more information.
+Using Spark's default log4j profile: org/apache/spark/log4j-defaults.properties
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+22/07/16 08:51:49 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+Welcome to
+      ____              __
+     / __/__  ___ _____/ /__
+    _\ \/ _ \/ _ `/ __/  '_/
+   /__ / .__/\_,_/_/ /_/\_\   version 3.2.1
+      /_/
+
+Using Python version 3.8.13 (default, Apr 11 2022 12:27:15)
+Spark context Web UI available at http://6380204e7f45:4040
+Spark context available as 'sc' (master = local[*], app id = local-1657961510351).
+SparkSession available as 'spark'.
+>>> data = sc.textFile('movies.csv')
+>>> data.take(5)
+['movieId,title,genres', '1,Toy Story (1995),Adventure|Animation|Children|Comedy|Fantasy', '2,Jumanji (1995),Adventure|Children|Fantasy', '3,Grumpier Old Men (1995),Comedy|Romance', '4,Waiting to Exhale (1995),Comedy|Drama|Romance']
+>>> # надо убрать строку с заголовками
+>>> headers = data.first()
+>>> data = data.filter(lambda x: x!=headers)
+>>> data.take(5)
+['1,Toy Story (1995),Adventure|Animation|Children|Comedy|Fantasy', '2,Jumanji (1995),Adventure|Children|Fantasy', '3,Grumpier Old Men (1995),Comedy|Romance', '4,Waiting to Exhale (1995),Comedy|Drama|Romance', '5,Father of the Bride Part II (1995),Comedy']
+>>> # теперь норм
+>>> # делить строку будем по запятой, но на случай, если в названии есть запятая отбросим нулевой элемент и последний
+>>> data.map(lambda x: ' '.join(x.split(',')[:-1][1:]).strip('"')).take(5)
+['Toy Story (1995)', 'Jumanji (1995)', 'Grumpier Old Men (1995)', 'Waiting to Exhale (1995)', 'Father of the Bride Part II (1995)']
+>>> data.map(lambda x: ' '.join(x.split(',')[:-1][1:]).strip('"')).take(5)
+['Toy Story (1995)', 'Jumanji (1995)', 'Grumpier Old Men (1995)', 'Waiting to Exhale (1995)', 'Father of the Bride Part II (1995)']
+>>> # теперь разделим строку по пробелу и отбросим последний элемент с годом
+>>> data.map(lambda x: ' '.join(x.split(',')[:-1][1:]).strip('"')).flatMap(lambda x: x.split(' ')[:-1]).take(5)
+['Toy', 'Story', 'Jumanji', 'Grumpier', 'Old']
+>>> data.map(lambda x: ' '.join(x.split(',')[:-1][1:]).strip('"')).flatMap(lambda x: x.split(' ')[:-1]).take(100)
+['Toy', 'Story', 'Jumanji', 'Grumpier', 'Old', 'Men', 'Waiting', 'to', 'Exhale', 'Father', 'of', 'the', 'Bride', 'Part', 'II', 'Heat', 'Sabrina', 'Tom', 'and', 'Huck', 'Sudden', 'Death', 'GoldenEye', 'American', 'President', '', 'The', 'Dracula:', 'Dead', 'and', 'Loving', 'It', 'Balto', 'Nixon', 'Cutthroat', 'Island', 'Casino', 'Sense', 'and', 'Sensibility', 'Four', 'Rooms', 'Ace', 'Ventura:', 'When', 'Nature', 'Calls', 'Money', 'Train', 'Get', 'Shorty', 'Copycat', 'Assassins', 'Powder', 'Leaving', 'Las', 'Vegas', 'Othello', 'Now', 'and', 'Then', 'Persuasion', 'City', 'of', 'Lost', 'Children', '', 'The', '(Cité', 'des', 'enfants', 'perdus', '', 'La)', 'Shanghai', 'Triad', '(Yao', 'a', 'yao', 'yao', 'dao', 'waipo', 'qiao)', 'Dangerous', 'Minds', 'Twelve', 'Monkeys', '(a.k.a.', '12', 'Monkeys)', 'Babe', 'Carrington', 'Dead', 'Man', 'Walking', 'Across', 'the', 'Sea', 'of', 'Time']
+>>> # надо привести все к одному регистру и избавиться от встречающихся скобок по краям
+>>> data.map(lambda x: ' '.join(x.split(',')[:-1][1:]).strip('"')).flatMap(lambda x: x.split(' ')[:-1]).map(lambda x: x.lower().lstrip('(').rstrip(')')).take(100)
+['toy', 'story', 'jumanji', 'grumpier', 'old', 'men', 'waiting', 'to', 'exhale', 'father', 'of', 'the', 'bride', 'part', 'ii', 'heat', 'sabrina', 'tom', 'and', 'huck', 'sudden', 'death', 'goldeneye', 'american', 'president', '', 'the', 'dracula:', 'dead', 'and', 'loving', 'it', 'balto', 'nixon', 'cutthroat', 'island', 'casino', 'sense', 'and', 'sensibility', 'four', 'rooms', 'ace', 'ventura:', 'when', 'nature', 'calls', 'money', 'train', 'get', 'shorty', 'copycat', 'assassins', 'powder', 'leaving', 'las', 'vegas', 'othello', 'now', 'and', 'then', 'persuasion', 'city', 'of', 'lost', 'children', '', 'the', 'cité', 'des', 'enfants', 'perdus', '', 'la', 'shanghai', 'triad', 'yao', 'a', 'yao', 'yao', 'dao', 'waipo', 'qiao', 'dangerous', 'minds', 'twelve', 'monkeys', 'a.k.a.', '12', 'monkeys', 'babe', 'carrington', 'dead', 'man', 'walking', 'across', 'the', 'sea', 'of', 'time']
+>>> # все норм. надо добавить единицу для подсчетов
+>>> data.map(lambda x: ' '.join(x.split(',')[:-1][1:]).strip('"')).flatMap(lambda x: x.split(' ')[:-1]).map(lambda x: (x.lower().lstrip('(').rstrip(')'), 1)).take(100)
+[('toy', 1), ('story', 1), ('jumanji', 1), ('grumpier', 1), ('old', 1), ('men', 1), ('waiting', 1), ('to', 1), ('exhale', 1), ('father', 1), ('of', 1), ('the', 1), ('bride', 1), ('part', 1), ('ii', 1), ('heat', 1), ('sabrina', 1), ('tom', 1), ('and', 1), ('huck', 1), ('sudden', 1), ('death', 1), ('goldeneye', 1), ('american', 1), ('president', 1), ('', 1), ('the', 1), ('dracula:', 1), ('dead', 1), ('and', 1), ('loving', 1), ('it', 1), ('balto', 1), ('nixon', 1), ('cutthroat', 1), ('island', 1), ('casino', 1), ('sense', 1), ('and', 1), ('sensibility', 1), ('four', 1), ('rooms', 1), ('ace', 1), ('ventura:', 1), ('when', 1), ('nature', 1), ('calls', 1), ('money', 1), ('train', 1), ('get', 1), ('shorty', 1), ('copycat', 1), ('assassins', 1), ('powder', 1), ('leaving', 1), ('las', 1), ('vegas', 1), ('othello', 1), ('now', 1), ('and', 1), ('then', 1), ('persuasion', 1), ('city', 1), ('of', 1), ('lost', 1), ('children', 1), ('', 1), ('the', 1), ('cité', 1), ('des', 1), ('enfants', 1), ('perdus', 1), ('', 1), ('la', 1), ('shanghai', 1), ('triad', 1), ('yao', 1), ('a', 1), ('yao', 1), ('yao', 1), ('dao', 1), ('waipo', 1), ('qiao', 1), ('dangerous', 1), ('minds', 1), ('twelve', 1), ('monkeys', 1), ('a.k.a.', 1), ('12', 1), ('monkeys', 1), ('babe', 1), ('carrington', 1), ('dead', 1), ('man', 1), ('walking', 1), ('across', 1), ('the', 1), ('sea', 1), ('of', 1), ('time', 1)]
+>>> # теперь собственно подсчет
+>>> data.map(lambda x: ' '.join(x.split(',')[:-1][1:]).strip('"')).flatMap(lambda x: x.split(' ')[:-1]).map(lambda x: (x.lower().lstrip('(').rstrip(')'), 1)).reduceByKey(lambda a, b: a+b).take(15)
+[('story', 73), ('jumanji', 1), ('grumpier', 1), ('waiting', 3), ('father', 16), ('of', 974), ('bride', 17), ('sabrina', 2), ('tom', 8), ('huck', 2), ('', 2281), ('dracula:', 1), ('loving', 2), ('nixon', 3), ('casino', 3)]
+>>> # отсортируем результат
+>>> data.map(lambda x: ' '.join(x.split(',')[:-1][1:]).strip('"')).flatMap(lambda x: x.split(' ')[:-1]).map(lambda x: (x.lower().lstrip('(').rstrip(')'), 1)).reduceByKey(lambda a, b: a+b).sortBy(lambda x: x[1], ascending=False).take(10)
+[('the', 3109), ('', 2281), ('of', 974), ('a', 388), ('and', 353), ('in', 303), ('to', 212), ('man', 141), ('on', 119), ('a.k.a.', 115)]
+>>> # посмотрим на датафрейм
+>>> df = data.map(lambda x: ' '.join(x.split(',')[:-1][1:]).strip('"')).flatMap(lambda x: x.split(' ')[:-1]).map(lambda x: (x.lower().lstrip('(').rstrip(')'), 1)).reduceByKey(lambda a, b: a+b).sortBy(lambda x: x[1], ascending=False).toDF(['word','ctc'])
+>>> df.show(30)
++------+----+
+|  word| ctc|
++------+----+
+|   the|3109|
+|      |2281|
+|    of| 974|
+|     a| 388|
+|   and| 353|
+|    in| 303|
+|    to| 212|
+|   man| 141|
+|    on| 119|
+|a.k.a.| 115|
+|     &| 111|
+|     2| 110|
+|    my|  99|
+|     i|  97|
+|   for|  97|
+|  love|  92|
+|    la|  87|
+|  with|  85|
+| night|  79|
+|  life|  77|
+|    no|  75|
+| story|  73|
+|  from|  73|
+| movie|  69|
+|    ii|  68|
+|    is|  67|
+|    de|  67|
+|    me|  67|
+|  last|  66|
+|   you|  66|
++------+----+
+only showing top 30 rows
+
+>>> # сохраняем дату в файл
+>>> data.map(lambda x: ' '.join(x.split(',')[:-1][1:]).strip('"')).flatMap(lambda x: x.split(' ')[:-1]).map(lambda x: (x.lower().lstrip('(').rstrip(')'), 1)).reduceByKey(lambda a, b: a+b).sortBy(lambda x: x[1], ascending=False).saveAsTextFile('/opt/bitnami/spark/output/flatmap')
+>>> # выходим отсюда и посмотрим что получилось
+>>> exit()
+I have no name!@6380204e7f45:/opt/bitnami/spark$ ls
+LICENSE  R          RELEASE  conf  examples  kubernetes  logs        output  sbin  venv  yarn
+NOTICE   README.md  bin      data  jars      licenses    movies.csv  python  tmp   work
+I have no name!@6380204e7f45:/opt/bitnami/spark$ cd /opt/bitnami/spark/output/flatmap
+I have no name!@6380204e7f45:/opt/bitnami/spark/output/flatmap$ ls
+_SUCCESS  part-00000  part-00001
+I have no name!@6380204e7f45:/opt/bitnami/spark/output/flatmap$ head part-00000
+('the', 3109)
+('', 2281)
+('of', 974)
+('a', 388)
+('and', 353)
+('in', 303)
+('to', 212)
+('man', 141)
+('on', 119)
+('a.k.a.', 115)
+I have no name!@6380204e7f45:/opt/bitnami/spark/output/flatmap$ 
