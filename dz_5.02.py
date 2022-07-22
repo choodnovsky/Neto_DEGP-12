@@ -84,7 +84,7 @@ df_3 = df_3.withColumn(
 res_3 = df_3.withColumn('delta', f.col('new_cases') - f.col('prev_day_cases'))
 
 # Удаляем ранее созданные папки с результатами в случае перезапуска скрипта
-path = f'{os.getcwd()}/Downloads/' # Определяем путь до папки Downloads в которуюю поместим папки с результатами
+path = f'{os.getcwd()}/dz_05.02/' # Определяем путь до папки Downloads в которуюю поместим папки с результатами
 os.system(f'rm -rf {path}res_1 {path}res_2 {path}res_3')
 
 # Сохраняем результаты в своих директориях
