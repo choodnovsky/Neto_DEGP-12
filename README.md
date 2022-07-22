@@ -46,9 +46,10 @@
 
 ### Продвинутые методы работы с данными
 
-| ***Наименование исследования***  | ***notebook*** |
-|:------------- |:-----------:|
-| Работа с Apache Spark       |[dz_5.01][27]|
+| ***Наименование исследования***  |             ***notebook***              |
+|:------------- |:---------------------------------------:|
+| Работа с Apache Spark       |              [dz_5.01][27]              |
+| Spark SQLSpark SQL      | [dz_5.02.ipynb][28]<br>[dz_5.02.py][29] |
 
 
 
@@ -84,3 +85,5 @@
 [25]:https://github.com/choodnovsky/Neto_DEGP-12/blob/master/mapreduce_1.sh
 [26]:https://raw.githubusercontent.com/choodnovsky/Neto_DEGP-12/master/result.log
 [27]:https://raw.githubusercontent.com/choodnovsky/Neto_DEGP-12/master/dz_5.01.txt
+[28]:https://github.com/choodnovsky/Neto_DEGP-12/blob/master/dz_5.02.ipynb
+[29]:https://github.com/choodnovsky/Neto_DEGP-12/blob/master/dz_5.02.py
