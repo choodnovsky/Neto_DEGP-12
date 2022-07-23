@@ -43,6 +43,7 @@ res_1 = df_1.groupBy('iso_code', 'location').agg(
     (f.sum('total_cases') / f.max('population')).alias('percent')
 ).orderBy(f.col(
     'percent').desc()).limit(15)
+res_1 = res_1.withColumn('percent', f.concat(f.round(res_1['percent'], 2), f.lit('%')))
 
 print(time.strftime("%T", time.localtime()) + "   Выполнено 1 задание")
 
@@ -59,7 +60,7 @@ df_2 = df.filter(
 ).select([
     'location',
     'new_cases',
-    'date'])
+    'date']).withColumn('date', f.to_timestamp('date').cast('date'))
 
 res_2 = df_2.withColumn('row_number', f.row_number().over(
     windowSpec.partitionBy('location').orderBy(f.col('new_cases').desc())
