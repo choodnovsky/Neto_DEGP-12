@@ -1,20 +1,26 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.window import Window
-from pyspark.sql import functions as f # импортируем функции
+from pyspark.sql.window import Window # класс окна
+from pyspark.sql import functions as f  # импортируем функции
 import os
+import time
 
+start_time = time.time()
+print(time.strftime("%T", time.localtime()) + "   Создаем сессию")
 
-spark = SparkSession.builder\
+spark = SparkSession.builder \
     .master('local[*]') \
     .appName('dz_05.02') \
     .getOrCreate()
 
-df = spark.read.\
-option('inferSchema', True).\
-option('sep', ',').\
-option('header', True).\
-csv('Downloads/covid-data.csv')
+print(time.strftime("%T", time.localtime()) + "   Считываем сырой файл")
 
+df = spark.read. \
+    option('inferSchema', True). \
+    option('sep', ','). \
+    option('header', True). \
+    csv('Downloads/covid-data.csv')
+
+# создаем объект окна
 windowSpec = Window()
 
 # df.printSchema()
@@ -22,7 +28,6 @@ windowSpec = Window()
 Задание 1
 Выберите 15 стран с наибольшим процентом переболевших на 31 марта
 (в выходящем датасете необходимы колонки: iso_code, страна, процент переболевших)
-Проверим какие локации маркируются префиксом OWID_
 '''
 
 df_1 = df.filter(
@@ -35,9 +40,11 @@ df_1 = df.filter(
     'population'])
 
 res_1 = df_1.groupBy('iso_code', 'location').agg(
-    (f.sum('total_cases')/ f.max('population')).alias('percent')
+    (f.sum('total_cases') / f.max('population')).alias('percent')
 ).orderBy(f.col(
     'percent').desc()).limit(15)
+
+print(time.strftime("%T", time.localtime()) + "   Выполнено 1 задание")
 
 '''
 Задание 2.
@@ -54,14 +61,16 @@ df_2 = df.filter(
     'new_cases',
     'date'])
 
-res_2 = df_2.withColumn('row_number',f.row_number().over(
+res_2 = df_2.withColumn('row_number', f.row_number().over(
     windowSpec.partitionBy('location').orderBy(f.col('new_cases').desc())
 )).filter(
-    f.col('row_number') == f.lit('1')).select([
+    f.col('row_number') == f.lit(1)).select([
     'location',
     'new_cases',
     'date']).orderBy(f.col(
     'new_cases').desc()).limit(10)
+
+print(time.strftime("%T", time.localtime()) + "   Выполнено 2 задание")
 
 '''
 Задание 3
@@ -74,17 +83,19 @@ df_3 = df.filter(
     (f.col('date') >= f.lit('2021-03-25')) &
     (f.col('date') <= f.lit('2021-03-31')) &
     (f.col('iso_code') == f.lit('RUS'))
-    ).select([
+).select([
     'date',
     'new_cases'])
 
 df_3 = df_3.withColumn(
-    'prev_day_cases', f.lag(f.col('new_cases'),1).over(windowSpec.partitionBy(f.lit(0)).orderBy('date')))
+    'prev_day_cases', f.lag(f.col('new_cases'), 1).over(windowSpec.partitionBy(f.lit(0)).orderBy('date')))
 
 res_3 = df_3.withColumn('delta', f.col('new_cases') - f.col('prev_day_cases'))
 
+print(time.strftime("%T", time.localtime()) + "   Выполнено 3 задание")
+
 # Удаляем ранее созданные папки с результатами в случае перезапуска скрипта
-path = f'{os.getcwd()}/dz_05.02/' # Определяем путь до папки Downloads в которуюю поместим папки с результатами
+path = f'{os.getcwd()}/dz_05.02/'  # Определяем путь до папки в которуюю поместим папки с результатами
 os.system(f'rm -rf {path}res_1 {path}res_2 {path}res_3')
 
 # Сохраняем результаты в своих директориях
@@ -93,4 +104,7 @@ res_1.write.option('header', 'true').csv(f'{path}res_1')
 res_2.write.option('header', 'true').csv(f'{path}res_2')
 res_3.write.option('header', 'true').csv(f'{path}res_3')
 
+
 spark.stop()
+
+print(time.strftime("%T", time.localtime()) + "   Результаты сохранены. Сессия завершена, время выполнения: " + str(round((time.time() - start_time), 2)) + " сек")
