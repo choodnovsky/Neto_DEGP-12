@@ -60,7 +60,7 @@ df_2 = df.filter(
 ).select([
     'location',
     'new_cases',
-    'date']).withColumn('date', f.to_timestamp('date').cast('date'))
+    'date']).withColumn('date', f.col('date').cast('date'))
 
 res_2 = df_2.withColumn('row_number', f.row_number().over(
     windowSpec.partitionBy('location').orderBy(f.col('new_cases').desc())
@@ -86,7 +86,7 @@ df_3 = df.filter(
     (f.col('iso_code') == f.lit('RUS'))
 ).select([
     'date',
-    'new_cases'])
+    'new_cases']).withColumn('date', f.col('date').cast('date'))
 
 df_3 = df_3.withColumn(
     'prev_day_cases', f.lag(f.col('new_cases'), 1).over(windowSpec.partitionBy(f.lit(0)).orderBy('date')))
