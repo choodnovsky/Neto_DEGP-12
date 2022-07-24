@@ -7,18 +7,18 @@ import time
 start_time = time.time()
 print(time.strftime("%T", time.localtime()) + "   Создаем сессию")
 
-spark = SparkSession.builder \
-    .master('local[*]') \
-    .appName('dz_05.02') \
+spark = SparkSession.builder\
+    .master('local[*]')\
+    .appName('dz_05.02')\
     .getOrCreate()
 
 print(time.strftime("%T", time.localtime()) + "   Считываем сырой файл")
 
-df = spark.read. \
-    option('inferSchema', True). \
-    option('sep', ','). \
-    option('header', True). \
-    csv('Downloads/covid-data.csv')
+df = spark.read\
+    .option('inferSchema', True)\
+    .option('sep', ',')\
+    .option('header', True)\
+    .csv('Downloads/covid-data.csv')
 
 # создаем объект окна
 windowSpec = Window()
@@ -40,9 +40,8 @@ df_1 = df.filter(
     'population'])
 
 res_1 = df_1.groupBy('iso_code', 'location').agg(
-    (f.sum('total_cases') / f.max('population')).alias('percent')
-).orderBy(f.col(
-    'percent').desc()).limit(15)
+    (f.sum('total_cases') / f.max('population')).alias('percent'))\
+    .orderBy(f.col('percent').desc()).limit(15)
 res_1 = res_1.withColumn('percent', f.concat(f.round(res_1['percent'], 2), f.lit('%')))
 
 print(time.strftime("%T", time.localtime()) + "   Выполнено 1 задание")
@@ -56,16 +55,16 @@ Top 10 стран с максимальным зафиксированным к�
 
 df_2 = df.filter(
     ((f.col('date') >= f.lit('2021-03-25')) & (f.col('date') <= f.lit('2021-03-31'))) &
-    ((~f.col('iso_code').contains('OWID')) | (f.col('iso_code').contains('KOS')))
-).select([
+    ((~f.col('iso_code').contains('OWID')) | (f.col('iso_code').contains('KOS'))))\
+    .select([
     'location',
     'new_cases',
     'date']).withColumn('date', f.col('date').cast('date'))
 
 res_2 = df_2.withColumn('row_number', f.row_number().over(
-    windowSpec.partitionBy('location').orderBy(f.col('new_cases').desc())
-)).filter(
-    f.col('row_number') == f.lit(1)).select([
+    windowSpec.partitionBy('location').orderBy(f.col('new_cases').desc())))\
+    .filter(f.col('row_number') == f.lit(1))\
+    .select([
     'location',
     'new_cases',
     'date']).orderBy(f.col(
@@ -83,8 +82,8 @@ print(time.strftime("%T", time.localtime()) + "   Выполнено 2 зада�
 df_3 = df.filter(
     (f.col('date') >= f.lit('2021-03-25')) &
     (f.col('date') <= f.lit('2021-03-31')) &
-    (f.col('iso_code') == f.lit('RUS'))
-).select([
+    (f.col('iso_code') == f.lit('RUS')))\
+    .select([
     'date',
     'new_cases']).withColumn('date', f.col('date').cast('date'))
 
@@ -108,4 +107,5 @@ res_3.write.option('header', 'true').csv(f'{path}res_3')
 
 spark.stop()
 
-print(time.strftime("%T", time.localtime()) + "   Результаты сохранены. Сессия завершена, время выполнения: " + str(round((time.time() - start_time), 2)) + " сек")
+print(time.strftime("%T", time.localtime()) + "   Результаты сохранены. Сессия завершена, время выполнения: " +
+      str(round((time.time() - start_time), 2)) + " сек")
